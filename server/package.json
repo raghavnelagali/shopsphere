@@ -1,13 +1,15 @@
 {
-  "name": "server",
+  "name": "shopsphere-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "ShopSphere Backend",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Raghavendra",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
