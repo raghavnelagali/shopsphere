@@ -6,11 +6,13 @@ const authRoutes = require("./authRoutes");
 const productRoutes = require("./productRoutes");
 const cartRoutes = require("./cartRoutes");
 const orderRoutes = require("./orderRoutes");
+const userRoutes = require("./userRoutes");
 
 router.use("/auth", authRoutes);
 router.use("/products", productRoutes);
 router.use("/cart", cartRoutes);
 router.use("/orders", orderRoutes);
+router.use("/users", userRoutes);
 
 router.get("/", (req, res) => {
   res.json({

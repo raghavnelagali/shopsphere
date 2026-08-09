@@ -2,6 +2,10 @@ const asyncHandler = require("../middlewares/asyncHandler");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
 
+// ======================================================
+// ADD TO CART
+// ======================================================
+
 const addToCart = asyncHandler(async (req, res) => {
 
     const { productId, quantity = 1 } = req.body;
@@ -15,6 +19,23 @@ const addToCart = asyncHandler(async (req, res) => {
         });
     }
 
+    // Validate quantity
+    if (quantity <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Quantity must be greater than 0",
+        });
+    }
+
+    // Check requested quantity against stock
+    if (quantity > product.stock) {
+        return res.status(400).json({
+            success: false,
+            message: `Only ${product.stock} items available`,
+        });
+    }
+
+    // Check if product already exists in user's cart
     const existingItem = await Cart.findOne({
         user: req.user._id,
         product: productId,
@@ -22,7 +43,19 @@ const addToCart = asyncHandler(async (req, res) => {
 
     if (existingItem) {
 
-        existingItem.quantity += quantity;
+        // Calculate new total quantity
+        const newQuantity =
+            existingItem.quantity + quantity;
+
+        // Check new quantity against stock
+        if (newQuantity > product.stock) {
+            return res.status(400).json({
+                success: false,
+                message: `Only ${product.stock} items available`,
+            });
+        }
+
+        existingItem.quantity = newQuantity;
 
         await existingItem.save();
 
@@ -31,9 +64,9 @@ const addToCart = asyncHandler(async (req, res) => {
             message: "Cart updated",
             data: existingItem,
         });
-
     }
 
+    // Create new cart item
     const cartItem = await Cart.create({
         user: req.user._id,
         product: productId,
@@ -45,8 +78,12 @@ const addToCart = asyncHandler(async (req, res) => {
         message: "Product added to cart",
         data: cartItem,
     });
-
 });
+
+
+// ======================================================
+// GET CART
+// ======================================================
 
 const getCart = asyncHandler(async (req, res) => {
 
@@ -59,23 +96,29 @@ const getCart = asyncHandler(async (req, res) => {
 
     let total = 0;
 
-    cart.forEach(item => {
-        total += item.product.price * item.quantity;
+    cart.forEach((item) => {
+
+        // Product may have been deleted
+        if (item.product) {
+            total +=
+                item.product.price *
+                item.quantity;
+        }
+
     });
 
     res.status(200).json({
-
-        success:true,
-
-        count:cart.length,
-
+        success: true,
+        count: cart.length,
         total,
-
-        data:cart,
-
+        data: cart,
     });
-
 });
+
+
+// ======================================================
+// UPDATE CART QUANTITY
+// ======================================================
 
 const updateCart = asyncHandler(async (req, res) => {
 
@@ -83,6 +126,33 @@ const updateCart = asyncHandler(async (req, res) => {
 
     const { quantity } = req.body;
 
+    // Validate quantity
+    if (quantity <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Quantity must be greater than 0",
+        });
+    }
+
+    // Find product
+    const product = await Product.findById(productId);
+
+    if (!product) {
+        return res.status(404).json({
+            success: false,
+            message: "Product not found",
+        });
+    }
+
+    // Check stock
+    if (quantity > product.stock) {
+        return res.status(400).json({
+            success: false,
+            message: `Only ${product.stock} items available`,
+        });
+    }
+
+    // Find cart item
     const cartItem = await Cart.findOne({
         user: req.user._id,
         product: productId,
@@ -104,8 +174,12 @@ const updateCart = asyncHandler(async (req, res) => {
         message: "Quantity updated",
         data: cartItem,
     });
-
 });
+
+
+// ======================================================
+// REMOVE FROM CART
+// ======================================================
 
 const removeFromCart = asyncHandler(async (req, res) => {
 
@@ -118,17 +192,21 @@ const removeFromCart = asyncHandler(async (req, res) => {
 
     if (!cartItem) {
         return res.status(404).json({
-            success:false,
-            message:"Cart item not found",
+            success: false,
+            message: "Cart item not found",
         });
     }
 
     res.status(200).json({
-        success:true,
-        message:"Product removed from cart",
+        success: true,
+        message: "Product removed from cart",
     });
-
 });
+
+
+// ======================================================
+// EXPORTS
+// ======================================================
 
 module.exports = {
     addToCart,
