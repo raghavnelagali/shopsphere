@@ -8,6 +8,7 @@ const admin = require("../middlewares/admin");
 const {
     placeOrder,
     getMyOrders,
+    getAllOrders,
     getOrderById,
     updateOrderStatus,
     createRazorpayOrder,
@@ -28,6 +29,13 @@ router.post(
     "/payment/verify",
     protect,
     verifyRazorpayPayment
+);
+
+router.get(
+    "/admin/all",
+    protect,
+    admin,
+    getAllOrders
 );
 
 router.get("/:id", protect, getOrderById);

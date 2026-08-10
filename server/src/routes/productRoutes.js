@@ -9,6 +9,7 @@ const {
   createProduct,
   getProducts,
   getProductById,
+  getFeaturedProducts,
   updateProduct,
   deleteProduct,
 } = require("../controllers/productController");
@@ -31,12 +32,15 @@ router.post(
 
 router.get("/", getProducts);
 
+router.get("/featured", getFeaturedProducts);
+
 router.get("/:id", getProductById);
 
 router.put(
     "/:id",
     protect,
     admin,
+    upload.single("image"),
     updateProduct);
 
 router.delete(

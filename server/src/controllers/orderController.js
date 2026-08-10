@@ -177,6 +177,28 @@ const getMyOrders = asyncHandler(async (req, res) => {
     });
 });
 
+const getAllOrders = asyncHandler(async (req, res) => {
+
+    const orders = await Order.find()
+        .populate("user", "name email")
+        .populate(
+            "orderItems.product",
+            "name images price"
+        )
+        .sort({ createdAt: -1 });
+
+
+    res.status(200).json({
+
+        success: true,
+
+        count: orders.length,
+
+        data: orders,
+
+    });
+
+});
 
 // ======================================================
 // GET ORDER BY ID
@@ -487,6 +509,8 @@ module.exports = {
     placeOrder,
 
     getMyOrders,
+
+    getAllOrders,
 
     getOrderById,
 

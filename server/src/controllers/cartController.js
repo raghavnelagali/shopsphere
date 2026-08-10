@@ -126,56 +126,98 @@ const updateCart = asyncHandler(async (req, res) => {
 
     const { quantity } = req.body;
 
-    // Validate quantity
-    if (quantity <= 0) {
+
+    // ==========================================
+    // VALIDATE QUANTITY
+    // ==========================================
+
+    if (
+        quantity === undefined ||
+        !Number.isInteger(quantity) ||
+        quantity < 1
+    ) {
+
         return res.status(400).json({
             success: false,
-            message: "Quantity must be greater than 0",
+            message: "Quantity must be a positive integer",
         });
+
     }
 
-    // Find product
-    const product = await Product.findById(productId);
+
+    // ==========================================
+    // FIND PRODUCT
+    // ==========================================
+
+    const product = await Product.findById(
+        productId
+    );
+
 
     if (!product) {
+
         return res.status(404).json({
             success: false,
             message: "Product not found",
         });
+
     }
 
-    // Check stock
+
+    // ==========================================
+    // CHECK STOCK
+    // ==========================================
+
     if (quantity > product.stock) {
+
         return res.status(400).json({
             success: false,
             message: `Only ${product.stock} items available`,
         });
+
     }
 
-    // Find cart item
+
+    // ==========================================
+    // FIND CART ITEM
+    // ==========================================
+
     const cartItem = await Cart.findOne({
         user: req.user._id,
         product: productId,
     });
 
+
     if (!cartItem) {
+
         return res.status(404).json({
             success: false,
             message: "Cart item not found",
         });
+
     }
+
+
+    // ==========================================
+    // UPDATE QUANTITY
+    // ==========================================
 
     cartItem.quantity = quantity;
 
     await cartItem.save();
 
+
+    // ==========================================
+    // RESPONSE
+    // ==========================================
+
     res.status(200).json({
         success: true,
-        message: "Quantity updated",
+        message: "Quantity updated successfully",
         data: cartItem,
     });
-});
 
+});
 
 // ======================================================
 // REMOVE FROM CART

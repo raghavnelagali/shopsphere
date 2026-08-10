@@ -5,6 +5,7 @@ const streamifier = require("streamifier");
 
 
 const createProduct = asyncHandler(async (req, res) => {
+    console.log("REQ FILE:", req.file);
   const {
     name,
     description,
@@ -12,6 +13,7 @@ const createProduct = asyncHandler(async (req, res) => {
     category,
     brand,
     stock,
+    featured,
   } = req.body;
 
   let images = [];
@@ -44,6 +46,7 @@ const createProduct = asyncHandler(async (req, res) => {
     category,
     brand,
     stock,
+    featured: featured === "true",
     images,
   });
 
@@ -148,33 +151,138 @@ const updateProduct = asyncHandler(async (req, res) => {
 
     const { id } = req.params;
 
+
+    // ==========================================
+    // VALIDATE ID
+    // ==========================================
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
+
         return res.status(400).json({
             success: false,
             message: "Invalid Product ID",
         });
+
     }
 
-    const product = await Product.findByIdAndUpdate(
-        id,
-        req.body,
-        {
-            new: true,
-            runValidators: true,
-        }
-    );
+
+    // ==========================================
+    // FIND PRODUCT
+    // ==========================================
+
+    const product =
+        await Product.findById(id);
 
     if (!product) {
+
         return res.status(404).json({
             success: false,
             message: "Product not found",
         });
+
     }
 
+
+    // ==========================================
+    // UPDATE TEXT FIELDS
+    // ==========================================
+
+    const {
+        name,
+        description,
+        price,
+        category,
+        brand,
+        stock,
+        featured,
+    } = req.body;
+
+
+    product.name = name;
+    product.description = description;
+    product.price = price;
+    product.category = category;
+    product.brand = brand;
+    product.stock = stock;
+    product.featured =
+        featured === "true";
+
+
+    // ==========================================
+    // UPDATE IMAGE IF PROVIDED
+    // ==========================================
+
+    if (req.file) {
+
+        const uploadResult =
+            await new Promise(
+                (resolve, reject) => {
+
+                    const stream =
+                        cloudinary.uploader.upload_stream(
+                            {
+                                folder:
+                                    "shopsphere/products",
+                            },
+
+                            (error, result) => {
+
+                                if (error) {
+                                    return reject(
+                                        error
+                                    );
+                                }
+
+                                resolve(result);
+
+                            }
+                        );
+
+                    streamifier
+                        .createReadStream(
+                            req.file.buffer
+                        )
+                        .pipe(stream);
+
+                }
+            );
+
+
+        // Replace existing image
+
+        product.images = [
+            {
+                url:
+                    uploadResult.secure_url,
+
+                public_id:
+                    uploadResult.public_id,
+            },
+        ];
+
+    }
+
+
+    // ==========================================
+    // SAVE
+    // ==========================================
+
+    await product.save();
+
+
+    // ==========================================
+    // RESPONSE
+    // ==========================================
+
     res.status(200).json({
+
         success: true,
-        message: "Product updated successfully",
+
+        message:
+            "Product updated successfully",
+
         data: product,
+
     });
 
 });
@@ -206,10 +314,26 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 });
 
+const getFeaturedProducts = asyncHandler(async (req, res) => {
+
+    const products = await Product.find({
+        featured: true,
+    })
+        .sort({ createdAt: -1 })
+        .limit(6);
+
+    res.status(200).json({
+        success: true,
+        count: products.length,
+        data: products,
+    });
+});
+
 module.exports = {
     createProduct,
     getProducts,
     getProductById,
+    getFeaturedProducts,
     updateProduct,
     deleteProduct,
 };
