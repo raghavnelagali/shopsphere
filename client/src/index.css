@@ -1,0 +1,40 @@
+:root {
+    --primary-blue: #2874f0;
+    --dark-blue: #1e3f8f;
+    --light-blue: #eaf2ff;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f5f5f5;
+    color: #212121;
+}
+
+a {
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+.btn-primary:hover {
+    background-color: #1f63d0;
+    border-color: #1f63d0;
+}
+
+.text-primary {
+    color: var(--primary-blue) !important;
+}
+
+.product-card {
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
+}

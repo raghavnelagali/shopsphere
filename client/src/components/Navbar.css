@@ -1,0 +1,111 @@
+/* ==========================================
+   SHOPSPHERE NAVBAR
+========================================== */
+
+.shopsphere-navbar {
+    background: #2874f0;
+    min-height: 64px;
+}
+
+
+/* ==========================================
+   LOGO
+========================================== */
+
+.shopsphere-navbar .navbar-brand {
+    font-size: 1.5rem;
+    letter-spacing: 0.3px;
+    transition: opacity 0.2s ease;
+}
+
+.shopsphere-navbar .navbar-brand:hover {
+    opacity: 0.85;
+}
+
+
+/* ==========================================
+   NAV LINKS
+========================================== */
+
+.shopsphere-navbar .nav-link {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    padding: 8px 12px;
+    transition: all 0.2s ease;
+}
+
+.shopsphere-navbar .nav-link:hover {
+    color: #ffffff;
+}
+
+
+/* ==========================================
+   SEARCH
+========================================== */
+
+.shopsphere-navbar form {
+    max-width: 650px;
+}
+
+.shopsphere-navbar form .form-control {
+    border: none;
+    border-radius: 4px;
+    min-height: 40px;
+    box-shadow: none;
+}
+
+.shopsphere-navbar form .form-control:focus {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.shopsphere-navbar form .btn {
+    min-width: 45px;
+    border-radius: 4px;
+}
+
+
+/* ==========================================
+   LOGOUT BUTTON
+========================================== */
+
+.shopsphere-navbar .btn-outline-light {
+    border-width: 1px;
+    font-weight: 500;
+    padding: 5px 12px;
+}
+
+.shopsphere-navbar .btn-outline-light:hover {
+    color: #2874f0;
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 991.98px) {
+
+    .shopsphere-navbar {
+        padding: 10px 0;
+    }
+
+    .shopsphere-navbar form {
+        max-width: none;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .shopsphere-navbar .navbar-nav {
+        margin-top: 5px;
+    }
+
+    .shopsphere-navbar .nav-link {
+        padding: 9px 0;
+    }
+
+    .shopsphere-navbar .btn-outline-light {
+        margin-top: 5px;
+        margin-bottom: 8px;
+    }
+
+}

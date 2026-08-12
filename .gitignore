@@ -1,21 +1,84 @@
-# Dependencies
+# ==========================================
+# DEPENDENCIES
+# ==========================================
+
 node_modules/
+**/node_modules/
 
-# Environment variables
+
+# ==========================================
+# ENVIRONMENT VARIABLES / SECRETS
+# ==========================================
+
 .env
+.env.*
+!.env.example
 
-# Build folders
+
+# ==========================================
+# BUILD FILES
+# ==========================================
+
 dist/
+dist-ssr/
 build/
 
-# Logs
+
+# ==========================================
+# LOGS
+# ==========================================
+
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Operating System files
+
+# ==========================================
+# LOCAL DATABASE BACKUP
+# ==========================================
+
+shopsphere-backup/
+
+
+# ==========================================
+# TEST / COVERAGE
+# ==========================================
+
+coverage/
+
+
+# ==========================================
+# EDITOR
+# ==========================================
+
+.vscode/
+!.vscode/extensions.json
+.idea/
+
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
+# ==========================================
+# OS
+# ==========================================
+
 .DS_Store
 Thumbs.db
 
-# VS Code settings (optional)
-.vscode/
+
+# ==========================================
+# TEMPORARY FILES
+# ==========================================
+
+*.tmp
+*.temp
+
+*.local
